@@ -1,0 +1,3 @@
+RENAME="$@"
+sed -i 's/problem_name/'"$RENAME"'/g' Makefile
+make
