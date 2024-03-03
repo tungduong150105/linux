@@ -1,3 +1,4 @@
+# Copyrights Ecnerwala
 #!/usr/bin/env python3
 """Download and setup problems from Competitive Companion
 Usage:
