@@ -1,4 +1,3 @@
-# Copyrights Ecnerwala
 #!/usr/bin/env bash
 
 DIR=$(dirname $0)
@@ -23,12 +22,6 @@ TEMPLATE_DIRS=($(search_up "$TEMPLATE_DIR" "$PARENT_FILE" | tac))
 unset IFS
 TEMPLATE_DIRS=(${TEMPLATE_DIRS[@]/%/\/"$TEMPLATE_DIR"})
 
-if hash rename.ul 2>/dev/null; then
-    RENAME=rename.ul
-else
-    RENAME=rename
-fi
-
 for filepath in "$@"; do
     PROBLEM_NAME=$(basename "$filepath")
 
@@ -37,28 +30,21 @@ for filepath in "$@"; do
         continue
     fi
 
+    # Create folder
+    mkdir "$PROBLEM_NAME"
+
     # Copy files in
-    mkdir -p "$filepath"
-    for CURRENT_TEMPLATE_DIR in "${TEMPLATE_DIRS[@]}"; do
-        cp -r -T "$CURRENT_TEMPLATE_DIR" "$filepath/"
-    done
-    rm -f "$filepath/$PARENT_FILE"
+    cp ~/programming/.template/main.cpp "$filepath"/
+    cp ~/programming/.template/run.sh "$filepath"/
+    cp ~/programming/.template/build.sh "$filepath"/
+    cp ~/programming/.template/brun.sh "$filepath"/
 
     # Rename PROBLEM_NAME in file names
-    find $filepath -type f -print0 | xargs -0 ${RENAME} "\$PROBLEM_NAME" "$PROBLEM_NAME"
-
-    # Envsubst PROBLEM_NAME in files
-    export PROBLEM_NAME
-    REPLACE_STRING='${PROBLEM_NAME}'
-    # REPLACE_STRING='problem_name'
-    find $filepath -type f -print0 | xargs -0 -I{} bash -c\
-  'TEMP=$(mktemp) && cat "$1" > "$TEMP" && envsubst '"'$REPLACE_STRING'"' < "$TEMP" > "$1" && rm "$TEMP"'\
-  -- {}
-
-    pushd $filepath > /dev/null
-    if [[ -e "setup" ]]; then
-        echo "Running setup"
-        ./setup "$@"
-    fi
-    popd > /dev/null
+    cd "$PROBLEM_NAME"
+    mv main.cpp "$PROBLEM_NAME".cpp
+    # echo "Running Setup"
+    # ./setup "$@"
+    # subl "$PROBLEM_NAME".cpp
+    cd ..
+    
 done
